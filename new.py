@@ -12,7 +12,7 @@ mutation_probability = 0.08
 
 
 #Generate random population
-populacja = population(10,7,generate=False)
+populacja = population(100,7,generate=False)
 populacja.calculateFitness()
 #populacja_bkp = populacja
 fit = 0
@@ -25,11 +25,14 @@ def alfaSelect (population,precent):
     pop = copy.deepcopy(population)
     pop.population_list.sort(key=lambda x:x.n_fitness, reverse = False)
     next_gen= []
+    not_cross = []
     for i in pop.population_list[:round(len(pop.population_list)*precent)]:
-        print (i.gene_list,i.n_fitness,i.fitness)
+        #print (i.gene_list,i.n_fitness,i.fitness)
         next_gen.append(i)
-    return next_gen
-ng = alfaSelect(populacja,0.5)
+    for i in pop.population_list[:round(len(pop.population_list))]:
+        not_cross.append(i)
+    return next_gen,not_cross
+ng,not_cross = alfaSelect(populacja,0.5)
 print('before')
 for i in ng:
     print(i.gene_list)
@@ -38,23 +41,31 @@ for i in populacja.population_list:
 print('after')
 for i in ng:
     print(i.gene_list)
-print('initial population')
-for i in populacja.population_list:
-    print (i.gene_list,i.fitness,i.n_fitness)
- 
-best = 0
+
+
+print ("CROSSED")
+populacja.calculateFitness()
+crossed_population = populacja.crossover(crossover_probability,ng,not_cross)
+print (len(crossed_population))
+populacja.population_list = crossed_population
+best = 999990
 best_chr=[]
-#for i in range(0,100):
-#    populacja.calculateFitness()
-#    populacja.selection(elitism=False)
-#    populacja.crossover(crossover_probability)
-#    temp = copy.deepcopy(populacja)
-#    temp.population_list.sort(key=lambda x:x.fitness, reverse = True)
-#    if temp.population_list[0].n_fitness < best:
-#        best = temp.population_list[0].n_fitness
-#        best_chr = temp.population_list[0].gene_list
+for i in crossed_population:
+    print (i.gene_list)
+    
+    
+for i in range(0,100):
+    populacja.calculateFitness()
+    ng,not_cross = alfaSelect(populacja,0.5)
+    populacja.population_list = crossed_population
+    
+    temp = copy.deepcopy(populacja)
+    temp.population_list.sort(key=lambda x:x.fitness, reverse = True)
+    if temp.population_list[0].n_fitness < best:
+        best = temp.population_list[0].n_fitness
+        best_chr = temp.population_list[0].gene_list
 #        
-#    print ("BEST Fitness {} {}, best in generation {} {}".format(best,best_chr,temp.population_list[0].fitness,temp.population_list[0].gene_list))
+    print ("BEST Fitness {} {}, best in generation {} {}".format(best,best_chr,temp.population_list[0].fitness,temp.population_list[0].gene_list))
 #    populacja.population_list = populacja.new_generation
     #for i in populacja.population_list:
     #    print (i.gene_list,i.fitness)

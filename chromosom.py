@@ -78,7 +78,7 @@ class chromosome():
             dd+=_distanceScore
             ff+=_flowScore
         
-        self.fitness = dd*ff
+        self.fitness = 1/dd*ff
         return self.fitness
 
 def _crossover(_ch1,_ch2,idx):
@@ -101,7 +101,7 @@ class population:
         if generate == False:
             counter = 1
             for chr in self.population_list:
-                print ("Z",chr.gene_list)
+                #print ("Z",chr.gene_list)
                 for gene_idx in range(1,len(chr.gene_list)-1):
                     counter+=1
                     #print ("Z",allele)
@@ -109,7 +109,7 @@ class population:
                     #print("NA",allele)
                     if counter == len(list_of_cities)-2:
                         counter=1
-                print ("N",chr.gene_list)
+                #print ("N",chr.gene_list)
                     
     def calculateFitness(self):
         fitness=0
@@ -134,7 +134,7 @@ class population:
         #for i in new_generation:
         #    print(i.fitness)
         new_generation = []
-        print(len(self.population_list))
+        #print(len(self.population_list))
        
         for i in range(0,len(self.population_list)-1 if elitism  else len(self.population_list) ):
             rint = random.randint(0,len(self.population_list)-1)
@@ -149,7 +149,7 @@ class population:
             new_generation.append(winner)
         temp = copy.copy(self.population_list)
         temp.sort(key=lambda x:x.fitness, reverse = True)
-        print(temp[0].fitness)
+        #print(temp[0].fitness)
         new_generation.append(temp[0])
         self.new_generation = new_generation
         #if len(new_generation)<len(self.population_list):
@@ -158,20 +158,23 @@ class population:
     def _crossover(self,_ch1,_ch2,idx):
         ch1, ch2 = copy.copy(_ch1), copy.copy(_ch2)
         #print ("1zmiana {} z {}".format(ch1.gene_list,ch2.gene_list))
-        print ("ORYGINAL {} z {}".format(_ch1.gene_list,_ch2.gene_list))
+        #print ("ORYGINAL {} z {}".format(_ch1.gene_list,_ch2.gene_list))
         for i in idx:
             ch1gene = ch1.gene_list[i]
             ch2gene = ch2.gene_list[i]
             ch1.gene_list[i] = ch2gene
             ch2.gene_list[i] = ch1gene
         return ch1,ch2       
-    def crossover(self,crossover_probability):
-        
-        ng_chr =self.new_generation
+    def crossover(self,crossover_probability,ng=[],not_cross=[]):
+        ng_chr = ng
+        not_cross=not_cross
+        if not ng_chr:
+            ng_chr = self.new_generation
+        #ng_chr =self.new_generation
         chr_to_crossover = []
         chr_unchanged = []
         for chr in ng_chr:
-            if crossover_probability < random.uniform(0,1):
+            if crossover_probability > random.uniform(0,1):
                 chr_to_crossover.append(copy.deepcopy(chr))
             else:
                 chr_unchanged.append(copy.deepcopy(chr))
@@ -196,13 +199,17 @@ class population:
             for i in range(0,n_cities_to_change):
                 idx_to_change.append(random.randint(1,self.chromosome_size-2))
             idx_to_change = set (idx_to_change)
-           # print (idx_to_change)
+            #print (idx_to_change)
+            #print(chr[0].gene_list,chr[1].gene_list)
             cchr1,cchr2 = _crossover(chr[0],chr[1],idx_to_change)
+            #print(chr[0].gene_list,chr[1].gene_list)
+            #print(cchr1.gene_list,cchr1.gene_list)
+            #print('-----------')
             after_change.append(cchr1)
             after_change.append(cchr2)
             
-        self.new_generation = after_change + chr_unchanged
-        
+        self.new_generation = after_change + chr_unchanged + not_cross
+        return self.new_generation
 
         
         

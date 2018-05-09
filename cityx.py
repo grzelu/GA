@@ -29,7 +29,7 @@ class city:
         self.name = data[0]
         self._cities.append(self)
     def getXY(self):
-        return self.x, self.y
+        return int(self.x), int(self.y)
     def __repr__(self):
         return self.name 
     def __str__(self):

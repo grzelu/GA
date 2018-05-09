@@ -46,17 +46,63 @@ def calculateDistance(A,B):
     AX, AY = A.getXY()
     BX, BY = B.getXY()
     #print ("VALUES",BX,AX,BY,AY)
-    if ((BX-AX)^2+(BY-AY)^2<0):
-        return 0
-    else:
-        distance = np.sqrt((BX-AX)^2+(BY-AY)^2)
-        return round(distance,2)
+    distance = np.sqrt(abs((BX-AX))^2+abs((BY-AY))^2)
+    return round(distance,2)
 
 
 
+from cityx import city,cities
+import numpy as np
+import random,copy
+
+data_path = "DATAtt.txt"
+data_file = open(data_path,'r')
+city_list = []
+flow_list = [] 
+flow=False
+while True:
+    line = data_file.readline().strip('\r\n')
+    if line=='END':
+        data_file.close()
+        break  
+    if (line=='---'):
+        flow=True
+        continue
+    elif(flow==False):
+       city_list.append(line.split(','))
+
+    if (flow==True):
+        
+       
+       x=line.split(',')
+       flow_list.append(x)
+
+data_file.close()
 
 
 
+chr = [7, 9, 1, 2, 4, 8, 3, 5, 11, 0, 10, 6]
+plt.axis([1, 800, 1, 800])
+
+xxx = []
+print('0000')
+for i in city_list:
+    xxx.append([i[1],i[2]])
+
+for i in xxx:
+    plt.plot(int(i[0]),int(i[1]),'ro')
 
 
+for i in range(0,len(chr)-1):
+    st = city_list[chr[i]]
+    nd = city_list[chr[i+1]]
+    plt.plot([int(st[1]),int(nd[1])],[int(st[2]),int(nd[2])],'k-')
+    print ([st[1],st[2]],[nd[1],nd[2]])
+    plt.draw()
+    #plt.plot([st[1],st[2]],[nd[1],nd[2]])
+    
+
+plt.show()
+
+    
 
