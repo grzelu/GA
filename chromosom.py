@@ -95,10 +95,22 @@ def _crossover(_ch1,_ch2,idx):
 class population:
     def __init__(self,population_size=100,chromosome_size = len(list_of_cities),generate = True):
         self.population_list = []
-        self.chromosome_size = chromosome_size
+        self.chromosome_size = chromosome_size  
         for i in range(0,population_size):
             self.population_list.append(chromosome(chromosome_size))
-            
+        if generate == False:
+            counter = 1
+            for chr in self.population_list:
+                print ("Z",chr.gene_list)
+                for gene_idx in range(1,len(chr.gene_list)-1):
+                    counter+=1
+                    #print ("Z",allele)
+                    chr.gene_list[gene_idx]=list_of_cities[counter]
+                    #print("NA",allele)
+                    if counter == len(list_of_cities)-2:
+                        counter=1
+                print ("N",chr.gene_list)
+                    
     def calculateFitness(self):
         fitness=0
         for chr in self.population_list:
@@ -159,7 +171,7 @@ class population:
         chr_to_crossover = []
         chr_unchanged = []
         for chr in ng_chr:
-            if crossover_probability > random.uniform(0,1):
+            if crossover_probability < random.uniform(0,1):
                 chr_to_crossover.append(copy.deepcopy(chr))
             else:
                 chr_unchanged.append(copy.deepcopy(chr))
